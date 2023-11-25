@@ -1,3 +1,4 @@
+
 import streamlit as st
 from faculty import main as faculty_page
 from university import university_page
