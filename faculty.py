@@ -112,5 +112,5 @@ def main():
             st.info("Go to the Login Menu to log in")
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     main()
