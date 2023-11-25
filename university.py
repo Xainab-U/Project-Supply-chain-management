@@ -1,4 +1,4 @@
-#uni.py
+
 import streamlit as st
 from database import create_usertable, approve_request, update_description, deny_request, delete_request, get_user_component_requests, get_user_reimbursement_requests, get_pending_component_requests, get_pending_reimbursement_requests,join_requests
 
