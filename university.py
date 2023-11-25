@@ -1,5 +1,6 @@
+#uni.py
 import streamlit as st
-from database import create_usertable, approve_request, update_description, deny_request, delete_request, get_user_component_requests, get_user_reimbursement_requests, get_pending_component_requests, get_pending_reimbursement_requests
+from database import create_usertable, approve_request, update_description, deny_request, delete_request, get_user_component_requests, get_user_reimbursement_requests, get_pending_component_requests, get_pending_reimbursement_requests,join_requests
 
 # Function to apply styling to request status
 def get_status_style(status):
@@ -13,7 +14,7 @@ def get_status_style(status):
 def university_page():
     st.title("University Request Handling")
 
-    # University login 
+    # University login
     university_username = "pes"
     university_password = "pes"
 
@@ -27,7 +28,7 @@ def university_page():
 
             # View Faculty Requests section
             faculty_username = st.text_input("Faculty Username")
-            
+
             # Dropdown for different request types
             request_type = st.selectbox("Select Request Type", ["Pending Component Requests", "Pending Reimbursement Requests", "View Component Requests", "View Reimbursement Requests"])
 
@@ -47,6 +48,13 @@ def university_page():
             elif request_type == "View Reimbursement Requests":
                 faculty_requests = get_user_reimbursement_requests(faculty_username)
                 handle_faculty_requests(faculty_username, faculty_requests, "Reimbursement")
+
+            # Button to join and display all reimbursement requests
+            if st.button("Join Reimbursement Requests"):
+                joined_reimbursement_requests = join_requests()
+                st.subheader("All Reimbursement Requests")
+                handle_requests(joined_reimbursement_requests, "reimbursementstable")
+
 
         else:
             st.error("Incorrect University Username or Password")
