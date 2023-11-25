@@ -1,3 +1,4 @@
+#database.py
 import sqlite3
 from datetime import datetime
 import streamlit as st
@@ -32,6 +33,21 @@ def create_usertable():
     conn.commit()
     conn.close()
 
+def join_requests():
+    conn = sqlite3.connect('dbmsProj.db')
+    c = conn.cursor()
+    join_query = '''
+        SELECT reimbursementstable.id, reimbursementstable.username, reimbursementstable.component_name,
+               reimbursementstable.price, reimbursementstable.retailer_name, reimbursementstable.image,
+               reimbursementstable.project_name, reimbursementstable.status, reimbursementstable.description,
+               userstable.email, userstable.phone
+        FROM reimbursementstable
+        INNER JOIN userstable ON reimbursementstable.username = userstable.username
+        WHERE reimbursementstable.status != "Deleted"
+    '''
+    data = c.execute(join_query).fetchall()
+    conn.close()
+    return data
 
 
 def is_valid_email(email):
