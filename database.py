@@ -1,4 +1,3 @@
-
 import sqlite3
 from datetime import datetime
 import streamlit as st
@@ -33,6 +32,31 @@ def create_usertable():
     conn.commit()
     conn.close()
 
+
+    c.execute('''CREATE FUNCTION is_valid_email(email TEXT) RETURNS INTEGER
+                BEGIN
+                    RETURN CASE
+                        WHEN email LIKE '%@pesu.pes.edu' THEN 1
+                        ELSE 0
+                    END;
+                END;''')
+
+    conn.commit()
+    conn.close()
+
+
+    c.execute('''CREATE PROCEDURE is_valid_phone_proc(phone TEXT)
+                BEGIN
+                    SELECT CASE
+                        WHEN LENGTH(phone) = 10 AND SUBSTR(phone, 1, 1) IN ('6', '7', '8', '9') AND SUBSTR(phone, 2) GLOB '[0-9]' THEN 1
+                        ELSE 0
+                    END;
+                END;''')
+
+    conn.commit()
+    conn.close()
+        
+
 def join_requests():
     conn = sqlite3.connect('dbmsProj.db')
     c = conn.cursor()
@@ -55,6 +79,18 @@ def is_valid_email(email):
 
 def is_valid_phone(phone):
     return len(phone) == 10 and phone[0] in ['6', '7', '8', '9'] and phone[1:].isdigit()
+
+
+def call_is_valid_phone_proc(phone):
+    conn = sqlite3.connect('dbmsProj.db')
+    c = conn.cursor()
+
+    # Call the is_valid_phone_proc procedure and fetch the result
+    result = c.execute('CALL is_valid_phone_proc(?)', (phone,)).fetchone()[0]
+
+    conn.close()
+
+    return result
 
 def add_userdata(username, password, email, phone):
     conn = sqlite3.connect('dbmsProj.db')
@@ -249,6 +285,7 @@ def get_pending_reimbursement_requests():
     data = c.execute('SELECT * FROM reimbursementstable WHERE status = "Pending"').fetchall()
     conn.close()
     return data
+
 
 if __name__ == '__main__':
     create_usertable()
